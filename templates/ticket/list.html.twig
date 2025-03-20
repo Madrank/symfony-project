@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des tickets{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h1 class="h3 mb-0">Liste des tickets</h1>
+        {% if is_granted('ROLE_ADMIN') %}
+            <a href="{{ path('app_ticket_new') }}" class="btn btn-primary">Nouveau ticket</a>
+        {% endif %}
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Description</th>
+                        <th>Catégorie</th>
+                        <th>Statut</th>
+                        <th>Responsable</th>
+                        <th>Date de création</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ticket in tickets %}
+                        <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.description|slice(0, 50) }}...</td>
+                            <td>{{ ticket.category.name }}</td>
+                            <td>
+                                <span class="badge {% if ticket.status.name == 'Nouveau' %}bg-primary{% elseif ticket.status.name == 'Ouvert' %}bg-warning{% elseif ticket.status.name == 'Résolu' %}bg-success{% else %}bg-secondary{% endif %}">
+                                    {{ ticket.status.name }}
+                                </span>
+                            </td>
+                            <td>{{ ticket.responsible ? ticket.responsible.name : 'Non assigné' }}</td>
+                            <td>{{ ticket.createdAt|date('d/m/Y H:i') }}</td>
+                            <td>
+                                <a href="{{ path('app_ticket_show', {'id': ticket.id}) }}" class="btn btn-sm btn-info">Voir</a>
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a href="{{ path('app_ticket_edit', {'id': ticket.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                                    {% if not ticket.closedAt %}
+                                        <a href="{{ path('app_ticket_close', {'id': ticket.id}) }}" class="btn btn-sm btn-danger" onclick="return confirm('Êtes-vous sûr de vouloir fermer ce ticket ?')">Fermer</a>
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucun ticket trouvé</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau ticket{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+        <div class="card">
+            <div class="card-header">
+                <h1 class="h3 mb-0">Créer un nouveau ticket</h1>
+            </div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                    {{ form_row(form.authorEmail) }}
+                    {{ form_row(form.description) }}
+                    {{ form_row(form.category) }}
+                    {% if is_granted('ROLE_ADMIN') %}
+                        {{ form_row(form.status) }}
+                        {{ form_row(form.responsible) }}
+                    {% endif %}
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Créer le ticket</button>
+                        <a href="{{ path('app_home') }}" class="btn btn-secondary">Annuler</a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
